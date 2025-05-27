@@ -1,0 +1,7 @@
+- [ ] Criar conecção com o banco de dados
+  - [x] Criar BackEnd
+  - [x] 
+  - [ ] Atribuir tarefas
+- [x] Projeto Y
+  - [x] Reunião de kickoff
+  - [ ] Desenvolvimento da fase 1

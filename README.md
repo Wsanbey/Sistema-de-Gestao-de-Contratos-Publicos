@@ -50,9 +50,9 @@ sistema-gestao-contratos/
 ├── src/
 │   ├── assets/
 │   ├── components/
+│   ├── layouts/
 │   ├── pages/
 │   ├── router/
-│   ├── store/
 │   ├── services/
 │   ├── App.vue
 │   └── main.js

@@ -38,3 +38,6 @@ coverage/
 
 # Optional: SASS cache
 .sass-cache/
+
+# ... outras regras existentes ...
+@project_map/
