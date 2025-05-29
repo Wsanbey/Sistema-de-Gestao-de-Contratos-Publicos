@@ -97,6 +97,13 @@ sistema-gestao-contratos/
 * [ ] Autenticação e controle de acesso
 
 ---
+## Documentação adicional
+
+- 📌 [Tarefas do Projeto](docs/README_TAREFAS.md)
+- 🔐 [Variáveis de Ambiente / Credenciais](docs/README_CREDENCIAIS.md)
+- 🏗️ [Arquitetura e Estrutura do Sistema](docs/README_ARQUITETURA.md)
+
+---
 
 ## 🤝 Contribuição
 

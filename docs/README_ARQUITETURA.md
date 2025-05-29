@@ -1,0 +1,4 @@
+# Fluxo, decisões técnicas, estrutura
+
+
+

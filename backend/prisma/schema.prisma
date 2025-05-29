@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  email     String    @unique
+  senha     String
+  cargo     String
+  ativo     Boolean   @default(true)
+  criadoEm  DateTime  @default(now())
+  contratos Contrato[]
+  alertas   Alerta[]
+}
+
+model Cliente {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  cnpj      String    @unique
+  telefone  String?
+  email     String?
+  endereco  String?
+  ativo     Boolean   @default(true)
+  contratos Contrato[]
+}
+
+model Contrato {
+  id            Int       @id @default(autoincrement())
+  numero        String    @unique
+  titulo        String
+  descricao     String?
+  valorTotal    Float
+  dataInicio    DateTime
+  dataFim       DateTime
+  status        String    
+  cliente       Cliente   @relation(fields: [clienteId], references: [id])
+  clienteId     Int
+  responsavel   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int
+  criadoEm      DateTime  @default(now())
+  atualizadoEm  DateTime  @updatedAt
+  documentos    Documento[]
+  aditivos      Aditivo[]
+  alertas       Alerta[]
+}
+
+model Documento {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  tipo        String
+  url         String
+  contrato    Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId  Int
+  criadoEm    DateTime  @default(now())
+}
+
+model Aditivo {
+  id          Int       @id @default(autoincrement())
+  numero      String    @unique
+  descricao   String
+  valor       Float
+  dataInicio  DateTime
+  dataFim     DateTime
+  contrato    Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId  Int
+  criadoEm    DateTime  @default(now())
+}
+
+model Alerta {
+  id          Int       @id @default(autoincrement())
+  titulo      String
+  descricao   String
+  tipo        String    // (Vencimento, Pagamento, etc)
+  data        DateTime
+  status      String    // (Pendente, Resolvido, etc)
+  contrato    Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId  Int
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
+  criadoEm    DateTime  @default(now())
+}
