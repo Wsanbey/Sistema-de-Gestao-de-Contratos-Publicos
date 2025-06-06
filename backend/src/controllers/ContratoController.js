@@ -7,7 +7,7 @@ class ContratoController {
       const contratos = await prisma.contrato.findMany({
         include: {
           cliente: true,
-          responsavel: true,
+          responsavel: true, 
           documentos: true,
           aditivos: true
         }

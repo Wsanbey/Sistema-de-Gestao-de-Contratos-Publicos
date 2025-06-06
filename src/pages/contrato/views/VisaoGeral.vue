@@ -25,33 +25,33 @@
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="text-muted small mb-1">Valor Global</label>
-              <div>R$ 120.000,00</div>
+              <div>{{ formatCurrency(contrato.valor_global) }}</div>
             </div>
             <div class="col-md-6">
               <label class="text-muted small mb-1">Valor Empenhado</label>
-              <div>R$ 96.000,00</div>
+              <div>{{ formatCurrency(contrato.valor_empenhado) }}</div>
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="text-muted small mb-1">Data de Início</label>
-              <div>{{ contrato.inicio }}</div>
+              <div>{{ formatDate(contrato.data_inicio) }}</div>
             </div>
             <div class="col-md-6">
               <label class="text-muted small mb-1">Data de Término</label>
-              <div>{{ contrato.fim }}</div>
+              <div>{{ formatDate(contrato.data_termino) }}</div>
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="text-muted small mb-1">Tipo de Reajuste</label>
-              <div>Não definido</div>
+              <div>{{ contrato.tipo_reajuste }}</div>
             </div>
             <div class="col-md-6">
               <label class="text-muted small mb-1">Status</label>
-              <div><span class="badge bg-danger">Expirado</span></div>
+              <div><span :class="{'badge bg-success': contrato.status === 'Ativo', 'badge bg-danger': contrato.status !== 'Ativo'}">{{ contrato.status }}</span></div>
             </div>
           </div>
         </div>
@@ -66,20 +66,20 @@
           
           <div class="mb-3">
             <label class="text-muted small mb-1">Valor Total</label>
-            <div>R$ 120.000,00</div>
+            <div>{{ formatCurrency(contrato.valor_global) }}</div>
           </div>
 
           <div class="mb-3">
             <label class="text-muted small mb-1">Valor Empenhado</label>
-            <div>R$ 96.000,00</div>
+            <div>{{ formatCurrency(contrato.valor_empenhado) }}</div>
           </div>
 
           <div class="mb-3">
             <label class="text-muted small mb-1">Percentual Utilizado</label>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: 80%"></div>
+              <div class="progress-bar" role="progressbar" :style="{ width: getPercentualUtilizado + '%' }"></div>
             </div>
-            <small class="text-muted">80%</small>
+            <small class="text-muted">{{ getPercentualUtilizado }}%</small>
           </div>
         </div>
       </div>
@@ -107,11 +107,50 @@
 </template>
 
 <script setup>
-defineProps({
-  contrato: {
-    type: Object,
-    required: true
+import { onMounted, ref, computed } from 'vue'
+import { useRoute } from 'vue-router';
+import api from '../../../services/api'
+
+const route = useRoute();
+const contratoId = route.params.id;
+
+const contrato = ref({})
+
+const buscarContrato = async (id) => {
+  try {
+    const response = await api.get(`/contratos/${id}`)
+    contrato.value = response.data
+  }catch (error) {
+    console.error('Erro ao buscar contrato:', error)
   }
+}
+
+const formatCurrency = (value) => {
+  if (value === null || value === undefined) return 'R$ 0,00';
+  return Number(value).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  })
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString)
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+}
+
+const getPercentualUtilizado = computed(() => {
+  if (!contrato.value.valor_global || !contrato.value.valor_empenhado) return 0;
+  const percentual = (contrato.value.valor_empenhado / contrato.value.valor_global) * 100;
+  return percentual.toFixed(0);
+})
+
+onMounted(() =>{
+  buscarContrato(contratoId)
 })
 </script>
 
