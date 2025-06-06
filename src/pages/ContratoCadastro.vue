@@ -56,49 +56,80 @@
 
           <div class="col-md-6">
             <label class="form-label">Arquivo do Contrato (PDF)</label>
-            <input type="file" class="form-control" accept=".pdf" @change="handleArquivoContrato" />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Arquivo do Empenho (PDF)</label>
-            <input type="file" class="form-control" accept=".pdf" @change="handleArquivoEmpenho" />
+            <!-- <input type="file" class="form-control" accept=".pdf" @change="handleArquivoContrato" /> -->
+            <input 
+              type="file" 
+              class="form-control" 
+              accept=".pdf" 
+              multiple
+              @change="handleDocumentos"
+              name="documentos"
+            />
+            <small class="text-muted">Selecione um ou mais arquivos PDF</small>
+            
+          <!-- Lista de arquivos selecionados -->
+          <div v-if="form.documentos.length > 0" class="mt-3">
+            <div class="card">
+              <div class="card-header py-2">
+                <small>Arquivos selecionados:</small>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li v-for="(doc, index) in form.documentos" :key="index" 
+                    class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span class="small">{{ doc.name }}</span>
+                  <button 
+                    @click="removerDocumento(index)"
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <!-- Painel de Debug (opcional) -->
-        <div v-if="debugMode" class="mt-4 p-3 bg-light rounded">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="mb-0">Informações de Debug</h6>
-            <button @click="preencherDadosTeste" class="btn btn-sm btn-outline-secondary">
-              Preencher com Dados Teste
-            </button>
-          </div>
-          
-          <div class="mb-3">
-            <h6>Dados Enviados:</h6>
-            <pre>{{ form }}</pre>
-          </div>
+        <div class="col-md-6">
+          <label class="form-label">Arquivo do Empenho (PDF)</label>
+          <input type="file" class="form-control" accept=".pdf" @change="handleArquivoEmpenho" />
         </div>
+      </div>
 
-        <div v-if="error" class="alert alert-danger mt-3">
-          <h6>Erro:</h6>
-          <p><strong>{{ error }}</strong></p>
-        </div>
-
-        <div v-if="mensagem" class="alert alert-success mt-3">
-          <h6>Sucesso:</h6>
-          <p><strong>{{ mensagem }}</strong></p>
-        </div>
-
-        <div class="mt-4">
-          <button 
-            type="submit" 
-            class="btn btn-primary"
-            :disabled="loading"
-          >
-            {{ loading ? 'Salvando...' : 'Salvar Contrato' }}
+      <!-- Painel de Debug (opcional) -->
+      <div v-if="debugMode" class="mt-4 p-3 bg-light rounded">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="mb-0">Informações de Debug</h6>
+          <button @click="preencherDadosTeste" class="btn btn-sm btn-outline-secondary">
+            Preencher com Dados Teste
           </button>
         </div>
+        
+        <div class="mb-3">
+          <h6>Dados Enviados:</h6>
+          <pre>{{ form }}</pre>
+        </div>
+      </div>
+
+      <div v-if="error" class="alert alert-danger mt-3">
+        <h6>Erro:</h6>
+        <p><strong>{{ error }}</strong></p>
+      </div>
+
+      <div v-if="mensagem" class="alert alert-success mt-3">
+        <h6>Sucesso:</h6>
+        <p><strong>{{ mensagem }}</strong></p>
+      </div>
+
+      <div class="mt-4">
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          :disabled="loading"
+        >
+          {{ loading ? 'Salvando...' : 'Salvar Contrato' }}
+        </button>
+      </div>
       </form>
     </div>
   </AppLayout>
@@ -116,7 +147,7 @@ export default {
       loading: false,
       error: null,
       mensagem: null,
-      debugMode: true, // Altere para false para desativar o debug
+      debugMode: true,
       form: {
         numero: '',
         orgao: '',
@@ -126,8 +157,7 @@ export default {
         data_inicio: '',
         data_termino: '',
         tipo_reajuste: '',
-        arquivo_contrato: null,
-        arquivo_empenho: null,
+        documentos: [], // Inicialize como array vazio
         clienteId: 1,
         usuarioId: 1,
         status: 'Ativo'
@@ -135,8 +165,16 @@ export default {
     }
   },
   methods: {
-    handleArquivoContrato(event) {
-      this.form.arquivo_contrato = event.target.files[0] || null
+    handleDocumentos(event) {
+      // Converte FileList para array e adiciona aos documentos existentes
+      const novosDocumentos = Array.from(event.target.files)
+      this.form.documentos = [...this.form.documentos, ...novosDocumentos]
+      
+      // Limpa o input para permitir nova seleção
+      this.$refs.documentosInput.value = null
+    },
+    removerDocumento(index) {
+      this.form.documentos.splice(index, 1)
     },
     handleArquivoEmpenho(event) {
       this.form.arquivo_empenho = event.target.files[0] || null
@@ -151,11 +189,10 @@ export default {
         data_inicio: '2025-06-06',
         data_termino: '2025-07-06',
         tipo_reajuste: 'IPCA',
+        documentos: [], // Mantém vazio ou pode adicionar arquivos de teste
         clienteId: 1,
         usuarioId: 1,
-        status: 'Ativo',
-        arquivo_contrato: null,
-        arquivo_empenho: null
+        status: 'Ativo'
       }
     },
     async salvarContrato() {
@@ -164,33 +201,31 @@ export default {
         this.error = null
         this.mensagem = null
 
-        // Validação simples
+        // Validação
         if (!this.form.numero || !this.form.orgao || !this.form.objeto) {
           throw new Error('Preencha os campos obrigatórios')
         }
 
-        // Preparar dados para envio (sem os arquivos)
-        const dadosParaEnvio = {
-          numero: this.form.numero,
-          orgao: this.form.orgao,
-          objeto: this.form.objeto,
-          valor_global: parseFloat(this.form.valor_global),
-          valor_empenhado: parseFloat(this.form.valor_empenhado),
-          data_inicio: this.form.data_inicio,
-          data_termino: this.form.data_termino,
-          tipo_reajuste: this.form.tipo_reajuste,
-          clienteId: this.form.clienteId,
-          usuarioId: this.form.usuarioId,
-          status: this.form.status
-        }
+        // Criar FormData para enviar arquivos
+        const formData = new FormData()
+        
+        // Adicionar campos normais
+        Object.keys(this.form).forEach(key => {
+          if (key !== 'documentos') {
+            formData.append(key, this.form[key])
+          }
+        })
+        
+        // Adicionar arquivos
+        this.form.documentos.forEach(file => {
+          formData.append('documentos', file)
+        })
 
-        // Enviar para a API (usando o endpoint do seu código que funciona)
+        // Enviar para API
         const response = await fetch('http://localhost:3000/api/contratos/novo', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(dadosParaEnvio)
+          body: formData
+          // Não definir Content-Type - o browser fará isso
         })
 
         if (!response.ok) {
@@ -198,26 +233,12 @@ export default {
           throw new Error(errorData.message || 'Erro ao salvar contrato')
         }
 
-        this.mensagem = 'Contrato salvo com sucesso!'
+        const data = await response.json()
+        this.mensagem = `Contrato ${data.numero} criado com ${data.documentos?.length || 0} documento(s)!`
         
-        // Limpar formulário após 2 segundos
+        // Limpar formulário
         setTimeout(() => {
-          this.form = {
-            numero: '',
-            orgao: '',
-            objeto: '',
-            valor_global: '',
-            valor_empenhado: '',
-            data_inicio: '',
-            data_termino: '',
-            tipo_reajuste: '',
-            arquivo_contrato: null,
-            arquivo_empenho: null,
-            clienteId: 1,
-            usuarioId: 1,
-            status: 'Ativo'
-          }
-          this.mensagem = null
+          this.resetForm()
         }, 2000)
 
       } catch (err) {
@@ -226,8 +247,25 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    resetForm() {
+      this.form = {
+        numero: '',
+        orgao: '',
+        objeto: '',
+        valor_global: '',
+        valor_empenhado: '',
+        data_inicio: '',
+        data_termino: '',
+        tipo_reajuste: '',
+        documentos: [],
+        clienteId: 1,
+        usuarioId: 1,
+        status: 'Ativo'
+      }
+      this.mensagem = null
     }
-  } 
+  }
 }
 </script>
 
