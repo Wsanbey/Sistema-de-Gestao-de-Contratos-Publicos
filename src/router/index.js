@@ -9,6 +9,11 @@ import Usuarios from '../pages/Usuarios.vue'
 import Configuracoes from '../pages/Configuracoes.vue'
 import AppLayout from '../layouts/AppLayout.vue' // Importar o AppLayout como componente pai
 
+
+import Formularios_para_testes from '../pages/Formularios_para_testes.vue'
+
+
+
 const routes = [
   { path: '/', name: 'Dashboard', component: Dashboard },
   { path: '/contratos', name: 'Contratos', component: ContratoLista },
@@ -22,7 +27,10 @@ const routes = [
     path: '/contratos/:id',
     name: 'ContratoDetalhes',
     component: () => import('@/pages/ContratoDetalhes.vue')
-  }
+  },
+  
+  {path: '/formulario_teste', name: 'Formularios_para_testes', component: Formularios_para_testes}
+
 ]
 
 const router = createRouter({

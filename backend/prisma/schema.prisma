@@ -37,23 +37,27 @@ model Cliente {
 }
 
 model Contrato {
-  id            Int       @id @default(autoincrement())
-  numero        String    @unique
-  titulo        String
-  descricao     String?
-  valorTotal    Float
-  dataInicio    DateTime
-  dataFim       DateTime
-  status        String    
-  cliente       Cliente   @relation(fields: [clienteId], references: [id])
-  clienteId     Int
-  responsavel   Usuario   @relation(fields: [usuarioId], references: [id])
-  usuarioId     Int
-  criadoEm      DateTime  @default(now())
-  atualizadoEm  DateTime  @updatedAt
-  documentos    Documento[]
-  aditivos      Aditivo[]
-  alertas       Alerta[]
+  id              Int       @id @default(autoincrement())
+  numero          String    @unique
+  orgao           String    // Novo campo
+  objeto          String    @db.Text  // Alterado para Text para textos longos
+  valor_global    Float
+  valor_empenhado Float     // Novo campo
+  data_inicio     DateTime
+  data_termino    DateTime
+  tipo_reajuste   String    // Novo campo para INPC, IGPM, etc
+  arquivo_contrato String?  // URL do arquivo
+  arquivo_empenho  String?  // URL do arquivo
+  status          String    @default("Ativo")
+  cliente         Cliente   @relation(fields: [clienteId], references: [id])
+  clienteId       Int
+  responsavel     Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId       Int
+  criado_em       DateTime  @default(now())
+  atualizado_em   DateTime  @updatedAt
+  documentos      Documento[]
+  aditivos        Aditivo[]
+  alertas         Alerta[]
 }
 
 model Documento {

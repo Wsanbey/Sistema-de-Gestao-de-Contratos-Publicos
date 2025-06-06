@@ -106,12 +106,33 @@ Esse comando:
 
 ### ✅10. Dica profissional: use migrações incrementais
 
+O nome da migration, como create-cliente, é um identificador descritivo que você escolhe para explicar a alteração feita no banco de dados. Ele não interfere tecnicamente na execução da migration, mas serve para organização e rastreabilidade do histórico.
+
 Sempre que fizer uma mudança no schema, gere uma nova migração com um nome que ajude a entender o que mudou. Isso facilita:
 
 * Controle de versão do banco
 * Colaboração com outras pessoas
 * Voltar atrás em caso de erro
 
+✅ Como escolher o nome da migration?
+
+A ideia é responder à pergunta:
+✅ Como escolher o nome da migration?
+
+A ideia é responder à pergunta:
+
+    “O que estou mudando no schema?”
+
+Veja alguns exemplos:
+
+| Alteração feita no `schema.prisma`                           | Nome sugerido para a migration         |
+|--------------------------------------------------------------|----------------------------------------|
+| Criação do modelo Cliente                                    | create-cliente                         |
+| Adição do campo telefone no modelo Cliente                   | add-telefone-cliente                   |
+| Remoção da tabela Contrato                                   | remove-contrato                        |
+| Alteração do tipo do campo cnpj de String para Int           | change-cnpj-type                       |
+| Criação de relação entre Cliente e Contrato                  | add-relacao-cliente-contrato           |
+    
 ---
 
-[INÍCIO](/docs/Capitulos/PRISMA.md)
+[INÍCIO](/docs/ANOTACOES.md)

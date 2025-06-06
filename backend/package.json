@@ -5,7 +5,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "jest"
+    "test": "jest",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev"
   },
   "keywords": [],
   "author": "Welry Sanbey",
@@ -16,7 +19,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "lgc-backend": "file:",
@@ -25,7 +28,7 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.0",
     "prisma": "^6.8.2"
   }
 }

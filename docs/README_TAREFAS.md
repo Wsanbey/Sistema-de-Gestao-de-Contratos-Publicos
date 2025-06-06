@@ -27,7 +27,7 @@
 #### API REST
 
 * [ x ] Criar servidor Express
-* [ ] Configurar o Prisma Client
+* [ x ] Configurar o Prisma Client
 * [ ] Criar middleware de autenticação JWT
 * [ ] Criar controle de permissões (RBAC) com base no perfil do usuário
 
@@ -49,7 +49,26 @@
   * [ ] Criar alerta de vigência ou reajuste
   * [ ] Listar alertas futuros
   * [ ] Enviar alerta (simular via console/email)
+  
+### Backend Prioritário
+* [ ] Implementar serviços básicos
+  * [ ] UserService
+  * [ ] ContractService
+  * [ ] ClientService
+* [ ] Criar middleware de autenticação
+* [ ] Implementar validações de dados
 
+### Frontend Prioritário
+* [ ] Criar layouts base
+* [ ] Implementar rotas protegidas
+* [ ] Desenvolver componentes reutilizáveis
+* [ ] Integrar com API
+
+### Funcionalidades Core
+* [ ] Sistema de autenticação completo
+* [ ] CRUD de usuários
+* [ ] CRUD de contratos
+* [ ] CRUD de clientes
 ---
 
 ### ☁️ 3. Armazenamento com MinIO
@@ -137,13 +156,5 @@
 | Hospedagem     | Portainer                            |
 
 ---
-
-Se quiser, posso começar com **a primeira etapa prática agora mesmo**, como por exemplo:
-
-* Subir o PostgreSQL e MinIO via Docker
-* Criar o schema do Prisma
-* Iniciar o backend com Express e as rotas básicas
-
-É só me dizer por onde você prefere começar!
 
 
