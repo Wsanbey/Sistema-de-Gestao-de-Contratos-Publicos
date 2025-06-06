@@ -28,6 +28,10 @@
 <script setup>
 const documentos = [
   { id: 1, nome: 'Contrato Original.pdf', tipo: 'Contrato', data: '31/12/2022' },
+  { id: 1, nome: 'Contrato Original.pdf', tipo: 'Contrato', data: '31/12/2022' },
+  { id: 1, nome: 'Contrato Original.pdf', tipo: 'Contrato', data: '31/12/2022' },
+  { id: 1, nome: 'Contrato Original.pdf', tipo: 'Contrato', data: '31/12/2022' },
+  { id: 1, nome: 'Contrato Original.pdf', tipo: 'Contrato', data: '31/12/2022' },
   { id: 2, nome: 'Empenho 001.pdf', tipo: 'Empenho', data: '10/01/2023' }
 ]
 </script>

@@ -6,7 +6,7 @@
         <div class="card-body">
           <h5 class="card-title mb-4">Informações do Contrato</h5>
           
-          <div class="row mb-3">
+          <div class="row mb-3"> 
             <div class="col-md-6">
               <label class="text-muted small mb-1">Número</label>
               <div>{{ contrato.numero }}</div>

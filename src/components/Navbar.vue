@@ -21,7 +21,7 @@
         <span>JS</span>
       </div>
       <div>
-        <strong>João Silva</strong>
+        <strong>João Silva 2</strong>
         <div class="text-muted" style="font-size: 0.85rem;">Administrador</div>
       </div>
     </div>
