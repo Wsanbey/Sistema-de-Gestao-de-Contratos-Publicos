@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar Contrato</title>
+  <style>
+    .file-list {
+      margin: 10px 0;
+      padding: 5px;
+      border: 1px dashed #ccc;
+    }
+    .file-item {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Formulário de Contrato</h2>
+  <form id="contratoForm" enctype="multipart/form-data" method="post">
+    <label>Número: <input type="text" id="numero" name="numero" required readonly></label><br>
+    <label>Órgão: <input type="text" name="orgao" value="Secretaria de Educação" required></label><br>
+    <label>Objeto: <input type="text" name="objeto" value="Prestação de serviços de manutenção predial" required></label><br>
+    <label>Valor Global: <input type="number" step="0.01" name="valor_global" value="530000.00" required></label><br>
+    <label>Valor Empenhado: <input type="number" step="0.01" name="valor_empenhado" value="50000.00" required></label><br>
+    <label>Data Início: <input type="date" name="data_inicio" value="2025-07-01" required></label><br>
+    <label>Data Término: <input type="date" name="data_termino" value="2026-07-01" required></label><br>
+    <label>Tipo Reajuste: <input type="text" name="tipo_reajuste" value="IPCA anual" required></label><br>
+    <label>Status: <input type="text" name="status" value="Ativo" required></label><br>
+    <label>Cliente ID: <input type="text" name="clienteId" value="d9986b93-0532-4d4f-b7a3-f990aaf3d63b" required></label><br>
+    <label>Usuário ID: <input type="text" name="usuarioId" value="ec3a3bc5-aaae-4b5c-b001-df4ebb78ff56" required></label><br>
+    
+    <label>Arquivo Contrato(s): 
+      <input type="file" id="arquivoContrato" name="arquivo_contrato" multiple>
+      <div id="contratoList" class="file-list"></div>
+    </label><br>
+    
+    <label>Arquivo Empenho(s): 
+      <input type="file" id="arquivoEmpenho" name="arquivo_empenho" multiple>
+      <div id="empenhoList" class="file-list"></div>
+    </label><br>
+    
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    // Função para gerar número aleatório no formato CT-ANO-XXX
+    function gerarNumeroContrato() {
+      const ano = new Date().getFullYear();
+      const random = Math.floor(Math.random() * 900 + 100); // 100 a 999
+      return `CT-${ano}-${random}`;
+    }
+
+    // Preenche o campo número ao carregar a página
+    document.getElementById('numero').value = gerarNumeroContrato();
+
+    // Mostrar preview dos arquivos selecionados
+    document.getElementById('arquivoContrato').addEventListener('change', function(e) {
+      updateFileList('contratoList', e.target.files);
+    });
+
+    document.getElementById('arquivoEmpenho').addEventListener('change', function(e) {
+      updateFileList('empenhoList', e.target.files);
+    });
+
+    function updateFileList(elementId, files) {
+      const fileListElement = document.getElementById(elementId);
+      fileListElement.innerHTML = '';
+      
+      if (files.length === 0) {
+        fileListElement.innerHTML = '<em>Nenhum arquivo selecionado</em>';
+        return;
+      }
+      
+      const fileCount = document.createElement('div');
+      fileCount.textContent = `${files.length} arquivo(s) selecionado(s):`;
+      fileListElement.appendChild(fileCount);
+      
+      for (let i = 0; i < files.length; i++) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.textContent = `${i+1}. ${files[i].name} (${formatFileSize(files[i].size)})`;
+        fileListElement.appendChild(fileItem);
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat(bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+    }
+
+    document.getElementById('contratoForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      
+      // Verificar se há arquivos selecionados
+      const contratoFiles = document.getElementById('arquivoContrato').files;
+      const empenhoFiles = document.getElementById('arquivoEmpenho').files;
+      
+      if (contratoFiles.length === 0 && empenhoFiles.length === 0) {
+        alert('Por favor, selecione pelo menos um arquivo (contrato ou empenho)');
+        return;
+      }
+      
+      // Adicionar cada arquivo ao FormData com nomes únicos
+      for (let i = 0; i < contratoFiles.length; i++) {
+        formData.append('arquivo_contrato', contratoFiles[i]); // Mesmo nome para todos
+      }
+      
+      for (let i = 0; i < empenhoFiles.length; i++) {
+        formData.append('arquivo_empenho', empenhoFiles[i]); // Mesmo nome para todos
+      }
+      
+      // Adicionar contagem de arquivos
+      formData.append('total_contratos', contratoFiles.length);
+      formData.append('total_empenhos', empenhoFiles.length);
+
+      try {
+        // Ajuste a URL abaixo para o endpoint correto da sua API
+        const response = await fetch('http://localhost:3000/api/v1/contract/creat', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Contrato e arquivos enviados com sucesso!\n' + JSON.stringify(result, null, 2));
+          form.reset();
+          document.getElementById('contratoList').innerHTML = '';
+          document.getElementById('empenhoList').innerHTML = '';
+        } else {
+          alert('Erro ao enviar: ' + (result.message || 'Erro desconhecido'));
+        }
+      } catch (error) {
+        alert('Erro na comunicação com o servidor: ' + error.message);
+      }
+    };
+  </script>
+</body>
+</html>

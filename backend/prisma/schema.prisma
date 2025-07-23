@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Usuario {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   nome      String
   email     String    @unique
   senha     String
@@ -26,7 +26,7 @@ model Usuario {
 }
 
 model Cliente {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   nome      String
   cnpj      String    @unique
   telefone  String?
@@ -37,61 +37,62 @@ model Cliente {
 }
 
 model Contrato {
-  id              Int       @id @default(autoincrement())
-  numero          String    @unique
-  orgao           String    // Novo campo
-  objeto          String    @db.Text  // Alterado para Text para textos longos
-  valor_global    Float
-  valor_empenhado Float     // Novo campo
-  data_inicio     DateTime
-  data_termino    DateTime
-  tipo_reajuste   String    // Novo campo para INPC, IGPM, etc
-  arquivo_contrato String?  // URL do arquivo
-  arquivo_empenho  String?  // URL do arquivo
-  status          String    @default("Ativo")
-  cliente         Cliente   @relation(fields: [clienteId], references: [id])
-  clienteId       Int
-  responsavel     Usuario   @relation(fields: [usuarioId], references: [id])
-  usuarioId       Int
-  criado_em       DateTime  @default(now())
-  atualizado_em   DateTime  @updatedAt
-  documentos      Documento[]
-  aditivos        Aditivo[]
-  alertas         Alerta[]
+  id               String      @id @default(uuid())
+  numero           String      @unique
+  orgao            String
+  objeto           String      @db.Text
+  valor_global     Float
+  valor_empenhado  Float
+  data_inicio      DateTime
+  data_termino     DateTime
+  tipo_reajuste    String
+  arquivo_contrato Json?    
+  arquivo_empenho  Json?    
+  status           String      @default("Ativo")
+  cliente          Cliente     @relation(fields: [clienteId], references: [id])
+  clienteId        String
+  responsavel      Usuario     @relation(fields: [usuarioId], references: [id])
+  usuarioId        String
+  criado_em        DateTime    @default(now())
+  atualizado_em    DateTime    @updatedAt
+  documentos       Documento[]
+  aditivos         Aditivo[]
+  alertas          Alerta[]
+  deletado         Boolean @default(false)
 }
 
 model Documento {
-  id          Int       @id @default(autoincrement())
-  nome        String
-  tipo        String
-  url         String
-  contrato    Contrato  @relation(fields: [contratoId], references: [id])
-  contratoId  Int
-  criadoEm    DateTime  @default(now())
+  id         String    @id @default(uuid())
+  nome       String
+  tipo       String
+  url        String
+  contrato   Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId String
+  criadoEm   DateTime  @default(now())
 }
 
 model Aditivo {
-  id          Int       @id @default(autoincrement())
-  numero      String    @unique
-  descricao   String
-  valor       Float
-  dataInicio  DateTime
-  dataFim     DateTime
-  contrato    Contrato  @relation(fields: [contratoId], references: [id])
-  contratoId  Int
-  criadoEm    DateTime  @default(now())
+  id         String    @id @default(uuid())
+  numero     String    @unique
+  descricao  String
+  valor      Float
+  dataInicio DateTime
+  dataFim    DateTime
+  contrato   Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId String
+  criadoEm   DateTime  @default(now())
 }
 
 model Alerta {
-  id          Int       @id @default(autoincrement())
-  titulo      String
-  descricao   String
-  tipo        String    // (Vencimento, Pagamento, etc)
-  data        DateTime
-  status      String    // (Pendente, Resolvido, etc)
-  contrato    Contrato  @relation(fields: [contratoId], references: [id])
-  contratoId  Int
-  usuario     Usuario   @relation(fields: [usuarioId], references: [id])
-  usuarioId   Int
-  criadoEm    DateTime  @default(now())
+  id         String    @id @default(uuid())
+  titulo     String
+  descricao  String
+  tipo       String
+  data       DateTime
+  status     String
+  contrato   Contrato  @relation(fields: [contratoId], references: [id])
+  contratoId String
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId  String
+  criadoEm   DateTime  @default(now())
 }

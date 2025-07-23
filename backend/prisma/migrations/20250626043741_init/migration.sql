@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Usuario" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "senha" TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "Usuario" (
 
 -- CreateTable
 CREATE TABLE "Cliente" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "cnpj" TEXT NOT NULL,
     "telefone" TEXT,
@@ -26,29 +26,33 @@ CREATE TABLE "Cliente" (
 
 -- CreateTable
 CREATE TABLE "Contrato" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "numero" TEXT NOT NULL,
-    "titulo" TEXT NOT NULL,
-    "descricao" TEXT,
-    "valorTotal" DOUBLE PRECISION NOT NULL,
-    "dataInicio" TIMESTAMP(3) NOT NULL,
-    "dataFim" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL,
-    "clienteId" INTEGER NOT NULL,
-    "usuarioId" INTEGER NOT NULL,
-    "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "atualizadoEm" TIMESTAMP(3) NOT NULL,
+    "orgao" TEXT NOT NULL,
+    "objeto" TEXT NOT NULL,
+    "valor_global" DOUBLE PRECISION NOT NULL,
+    "valor_empenhado" DOUBLE PRECISION NOT NULL,
+    "data_inicio" TIMESTAMP(3) NOT NULL,
+    "data_termino" TIMESTAMP(3) NOT NULL,
+    "tipo_reajuste" TEXT NOT NULL,
+    "arquivo_contrato" JSONB,
+    "arquivo_empenho" JSONB,
+    "status" TEXT NOT NULL DEFAULT 'Ativo',
+    "clienteId" TEXT NOT NULL,
+    "usuarioId" TEXT NOT NULL,
+    "criado_em" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "atualizado_em" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Contrato_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Documento" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "tipo" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "contratoId" INTEGER NOT NULL,
+    "contratoId" TEXT NOT NULL,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Documento_pkey" PRIMARY KEY ("id")
@@ -56,13 +60,13 @@ CREATE TABLE "Documento" (
 
 -- CreateTable
 CREATE TABLE "Aditivo" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "numero" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
     "valor" DOUBLE PRECISION NOT NULL,
     "dataInicio" TIMESTAMP(3) NOT NULL,
     "dataFim" TIMESTAMP(3) NOT NULL,
-    "contratoId" INTEGER NOT NULL,
+    "contratoId" TEXT NOT NULL,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Aditivo_pkey" PRIMARY KEY ("id")
@@ -70,14 +74,14 @@ CREATE TABLE "Aditivo" (
 
 -- CreateTable
 CREATE TABLE "Alerta" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "titulo" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
     "tipo" TEXT NOT NULL,
     "data" TIMESTAMP(3) NOT NULL,
     "status" TEXT NOT NULL,
-    "contratoId" INTEGER NOT NULL,
-    "usuarioId" INTEGER NOT NULL,
+    "contratoId" TEXT NOT NULL,
+    "usuarioId" TEXT NOT NULL,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Alerta_pkey" PRIMARY KEY ("id")

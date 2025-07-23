@@ -1,10 +1,11 @@
- // backend/src/routes/documentos.js
-const express = require('express')
+const express = require('express');
+const router = express.Router();
+const DocumentoController = require('../controllers/DocumentoController');
 
-const router = express.Router()
+router.post('/criar', DocumentoController.criar);
+router.get('/listar', DocumentoController.listar);
+router.get('/:id', DocumentoController.buscarPorId);
+router.put('/:id', DocumentoController.atualizar);
+router.delete('/:id', DocumentoController.deletar);
 
-router.get('/', (req, res) => {
-  res.json({ mensagem: 'Rota de documentos funcionando!' })
-})
-
-module.exports = router
+module.exports = router;

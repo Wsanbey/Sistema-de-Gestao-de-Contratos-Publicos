@@ -1,0 +1,54 @@
+<!-- arquivo: enviar-contrato.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar Contrato</title>
+</head>
+<body>
+  <h2>Formulário de Contrato</h2>
+  <form id="contratoForm" enctype="multipart/form-data" method="post">
+    <label>Número: <input type="text" id="numero" name="numero" required readonly></label><br>
+    <label>Órgão: <input type="text" name="orgao" value="Secretaria de Educação" required></label><br>
+    <label>Objeto: <input type="text" name="objeto" value="Prestação de serviços de manutenção predial" required></label><br>
+    <label>Valor Global: <input type="number" step="0.01" name="valor_global" value="530000.00" required></label><br>
+    <label>Valor Empenhado: <input type="number" step="0.01" name="valor_empenhado" value="50000.00" required></label><br>
+    <label>Data Início: <input type="date" name="data_inicio" value="2025-07-01" required></label><br>
+    <label>Data Término: <input type="date" name="data_termino" value="2026-07-01" required></label><br>
+    <label>Tipo Reajuste: <input type="text" name="tipo_reajuste" value="IPCA anual" required></label><br>
+    <label>Status: <input type="text" name="status" value="Ativo" required></label><br>
+    <label>Cliente ID: <input type="text" name="clienteId" value="d9986b93-0532-4d4f-b7a3-f990aaf3d63b" required></label><br>
+    <label>Usuário ID: <input type="text" name="usuarioId" value="ec3a3bc5-aaae-4b5c-b001-df4ebb78ff56" required></label><br>
+    <label>Arquivo Contrato(s): <input type="file" name="arquivo_contrato" multiple></label><br>
+    <label>Arquivo Empenho(s): <input type="file" name="arquivo_empenho" multiple></label><br>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    // Função para gerar número aleatório no formato CT-ANO-XXX
+    function gerarNumeroContrato() {
+      const ano = new Date().getFullYear();
+      const random = Math.floor(Math.random() * 900 + 100); // 100 a 999
+      return `CT-${ano}-${random}`;
+    }
+
+    // Preenche o campo número ao carregar a página
+    document.getElementById('numero').value = gerarNumeroContrato();
+
+    document.getElementById('contratoForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      // Ajuste a URL abaixo para o endpoint correto da sua API
+      const response = await fetch('http://localhost:3000/api/v1/contract/creat', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      alert(JSON.stringify(result, null, 2));
+    };
+  </script>
+</body>
+</html>

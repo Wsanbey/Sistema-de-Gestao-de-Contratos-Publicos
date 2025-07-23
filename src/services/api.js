@@ -3,7 +3,7 @@ import axios from 'axios'
 localStorage.setItem('token', 'TOKEN_TESTE_123') // Remova isso quando tiver o login real
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: 'http://localhost:3000/api/v1'
 })
 
 // // Interceptor para adicionar token em todas as requisições

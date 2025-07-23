@@ -1,11 +1,13 @@
-// backend/src/routes/alertas.js
-const express = require('express')
+const express = require('express');
+const router = express.Router();
+const AlertaController = require('../controllers/AlertaController');
 
-const router = express.Router()
+router.post('/criar', AlertaController.criar);
+router.get('/listar', AlertaController.listar);
+router.get('/:id', AlertaController.buscarPorId);
+router.put('/:id', AlertaController.atualizar);
+router.delete('/:id', AlertaController.deletar);
 
-router.get('/', (req, res) => {
-  res.json({ mensagem: 'Rota de alertas funcionando!' })
-})
+module.exports = router;
 
-module.exports = router
 

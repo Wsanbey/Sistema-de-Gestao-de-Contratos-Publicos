@@ -4,6 +4,7 @@ const usuariosRoutes = require('./routes/usuarios')
 const alertasRoutes = require('./routes/alertas')
 const documentosRoutes = require('./routes/documentos')
 const clientesRoutes = require('./routes/clientes');
+const aditivosRoutes = require('./routes/aditivos');
 const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -18,11 +19,13 @@ app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/contratos', contratosRoutes)
-app.use('/api/usuarios', usuariosRoutes)
-app.use('/api/alertas', alertasRoutes)
-app.use('/api/documentos', documentosRoutes)
-app.use('/api/clientes', clientesRoutes);
+app.use('/api/v1/contract', contratosRoutes)
+app.use('/api/v1/usuarios', usuariosRoutes)
+app.use('/api/v1/alertas', alertasRoutes)
+app.use('/api/v1/documentos', documentosRoutes)
+app.use('/api/v1/clientes', clientesRoutes);
+app.use('/api/v1/aditivos', aditivosRoutes);
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack)
@@ -35,4 +38,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`)
+ 
 })

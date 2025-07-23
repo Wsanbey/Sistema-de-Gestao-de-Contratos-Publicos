@@ -1,75 +1,88 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-class ClienteController {
-  // Listar todos os clientes
-  async listar(req, res) {
+module.exports = {
+  // Criar cliente
+  async criar(req, res) {
     try {
-      const clientes = await prisma.cliente.findMany();
-      res.json(clientes);
-    } catch (error) {
-      res.status(500).json({ erro: 'Erro ao listar clientes' });
-    }
-  }
+      const { nome, cnpj, telefone, email, endereco } = req.body;
 
-  // Obter um cliente por ID
-  async obter(req, res) {
-    try {
-      const cliente = await prisma.cliente.findUnique({
-        where: { id: parseInt(req.params.id) }
-      });
-
-      if (!cliente) {
-        return res.status(404).json({ erro: 'Cliente não encontrado' });
+      const clienteExistente = await prisma.cliente.findUnique({ where: { cnpj } });
+      if (clienteExistente) {
+        return res.status(400).json({ mensagem: 'Cliente com esse CNPJ já existe.' });
       }
 
-      res.json(cliente);
-    } catch (error) {
-      res.status(500).json({ erro: 'Erro ao buscar cliente' });
-    }
-  }
+      const novoCliente = await prisma.cliente.create({
+        data: { nome, cnpj, telefone, email, endereco }
+      });
 
-  // Criar um novo cliente
-  async criar(req, res) {
-    console.log('Dados recebidos para criar cliente:', req.body);
+      return res.status(201).json(novoCliente);
+    } catch (erro) {
+      console.error(erro);
+      return res.status(500).json({ mensagem: 'Erro ao criar cliente.' });
+    }
+  },
+
+  // Listar todos os clientes ativos
+  async listar(req, res) {
     try {
-            const cliente = await prisma.cliente.create({
-                
-                data: req.body
-            });
-        
-        res.status(201).json(cliente);
-    } catch (error) {
-        console.error('Erro ao criar cliente:', error);
-        res.status(500).json({ erro: 'Erro ao criar cliente' });
-      
+      const clientes = await prisma.cliente.findMany({ where: { ativo: true } });
+      return res.status(200).json(clientes);
+    } catch (erro) {
+      console.error(erro);
+      return res.status(500).json({ mensagem: 'Erro ao listar clientes.' });
     }
-  } 
+  },
 
-  // Atualizar um cliente
+  // Buscar cliente por ID
+  async buscarPorId(req, res) {
+    try {
+      const { id } = req.params;
+      const cliente = await prisma.cliente.findUnique({ where: { id } });
+
+      if (!cliente || !cliente.ativo) {
+        return res.status(404).json({ mensagem: 'Cliente não encontrado.' });
+      }
+
+      return res.status(200).json(cliente);
+    } catch (erro) {
+      console.error(erro);
+      return res.status(500).json({ mensagem: 'Erro ao buscar cliente.' });
+    }
+  },
+
+  // Atualizar cliente
   async atualizar(req, res) {
     try {
-      const cliente = await prisma.cliente.update({
-        where: { id: parseInt(req.params.id) },
-        data: req.body
-      });
-      res.json(cliente);
-    } catch (error) {
-      res.status(500).json({ erro: 'Erro ao atualizar cliente' });
-    }
-  }
+      const { id } = req.params;
+      const { nome, cnpj, telefone, email, endereco } = req.body;
 
-  // Deletar um cliente
+      const clienteAtualizado = await prisma.cliente.update({
+        where: { id },
+        data: { nome, cnpj, telefone, email, endereco }
+      });
+
+      return res.status(200).json(clienteAtualizado);
+    } catch (erro) {
+      console.error(erro);
+      return res.status(500).json({ mensagem: 'Erro ao atualizar cliente.' });
+    }
+  },
+
+  // Exclusão lógica (inativar cliente)
   async deletar(req, res) {
     try {
-      await prisma.cliente.delete({
-        where: { id: parseInt(req.params.id) }
+      const { id } = req.params;
+
+      await prisma.cliente.update({
+        where: { id },
+        data: { ativo: false }
       });
-      res.json({ mensagem: 'Cliente excluído com sucesso' });
-    } catch (error) {
-      res.status(500).json({ erro: 'Erro ao excluir cliente' });
+
+      return res.status(200).json({ mensagem: 'Cliente inativado com sucesso.' });
+    } catch (erro) {
+      console.error(erro);
+      return res.status(500).json({ mensagem: 'Erro ao deletar cliente.' });
     }
   }
-}
-
-module.exports = new ClienteController();
+};

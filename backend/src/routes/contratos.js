@@ -1,18 +1,31 @@
-// backend/src/routes/contratos.js
 const express = require('express');
-const router = express.Router(); 
-const ContratoController = require('../controllers/ContratoController')
+const router = express.Router();
+const ContratoController = require('../controllers/ContratoController');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
-// Rota base para testar
-router.get('/', (req, res) => {
-  res.json({ mensagem: 'Rota de contratos funcionando!' })
-})
+router.post(
+  '/create',
+  upload.fields([
+    { name: 'arquivo_contrato', maxCount: 10 },
+    { name: 'arquivo_empenho', maxCount: 10 }
+  ]),
+  ContratoController.creat
+);
 
-// Rotas CRUD
-router.get('/lista', ContratoController.listar);
-router.get('/:id', ContratoController.obter);
-router.post('/novo', ContratoController.criar);
-router.put('/:id', ContratoController.atualizar);
+router.put('/update/:id', 
+  upload.fields([
+    { name: 'arquivo_contrato', maxCount:10},
+    { name: 'arquivo_empenho', maxCount:10 }
+  
+  ]),
+  ContratoController.UpDate
+);
+ 
+
+router.get('/list', ContratoController.listar);
+router.get('/:id', ContratoController.buscarPorId);
 router.delete('/:id', ContratoController.deletar);
+router.get('/arquivo/:id', ContratoController.gerarUrlTemporariaMinio);
 
-module.exports = router
+module.exports = router;
