@@ -19,12 +19,12 @@ Painel web para cadastro, controle e monitoramento de contratos publicos com adi
 [Adicionar screenshots]
 
 ## Instalacao
-`ash
+```bash
 git clone https://github.com/Wsanbey/Sistema-de-Gestao-de-Contratos-Publicos.git
 cd Sistema-de-Gestao-de-Contratos-Publicos
 npm install
 npm run serve
-`
+```
 
 ## Licenca
 MIT
